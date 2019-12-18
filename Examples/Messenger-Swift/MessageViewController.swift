@@ -74,9 +74,9 @@ class MessageViewController: SLKTextViewController {
         self.rightButton.setTitle(NSLocalizedString("Send", comment: ""), for: UIControlState())
         
         self.textInputbar.autoHideRightButton = true
-        self.textInputbar.maxCharCount = 256
-        self.textInputbar.counterStyle = .split
-        self.textInputbar.counterPosition = .top
+        self.textInputbar.minCharCount = 50
+        self.textInputbar.counterStyle = .none
+        self.textInputbar.counterPosition = .alwaysTop
         
         self.textInputbar.editorTitle.textColor = UIColor.darkGray
         self.textInputbar.editorLeftButton.tintColor = UIColor(red: 0/255, green: 122/255, blue: 255/255, alpha: 1)
@@ -147,7 +147,7 @@ extension MessageViewController {
     
     // MARK: - Action Methods
     
-    func hideOrShowTextInputbar(_ sender: AnyObject) {
+    @objc func hideOrShowTextInputbar(_ sender: AnyObject) {
         
         guard let buttonItem = sender as? UIBarButtonItem else {
             return
@@ -160,7 +160,7 @@ extension MessageViewController {
         buttonItem.image = image
     }
     
-    func fillWithText(_ sender: AnyObject) {
+    @objc func fillWithText(_ sender: AnyObject) {
         
         if self.textView.text.characters.count == 0 {
             var sentences = Int(arc4random() % 4)
@@ -174,7 +174,7 @@ extension MessageViewController {
         }
     }
     
-    func simulateUserTyping(_ sender: AnyObject) {
+    @objc func simulateUserTyping(_ sender: AnyObject) {
         
         if !self.canShowTypingIndicator() {
             return
@@ -202,7 +202,7 @@ extension MessageViewController {
         }
     }
     
-    func didLongPressCell(_ gesture: UIGestureRecognizer) {
+    @objc func didLongPressCell(_ gesture: UIGestureRecognizer) {
         
         guard let view = gesture.view else {
             return
@@ -243,7 +243,7 @@ extension MessageViewController {
         self.tableView.scrollToRow(at: cell.indexPath, at: .bottom, animated: true)
     }
     
-    func editRandomMessage(_ sender: AnyObject) {
+    @objc func editRandomMessage(_ sender: AnyObject) {
         
         var sentences = Int(arc4random() % 10)
         
@@ -270,7 +270,7 @@ extension MessageViewController {
         self.tableView.scrollToRow(at: IndexPath(row: lastRowIndex, section: lastSectionIndex), at: .bottom, animated: true)
     }
     
-    func togglePIPWindow(_ sender: AnyObject) {
+    @objc func togglePIPWindow(_ sender: AnyObject) {
         
         if self.pipWindow == nil {
             self.showPIPWindow(sender)
@@ -309,7 +309,7 @@ extension MessageViewController {
         }) 
     }
     
-    func textInputbarDidMove(_ note: Notification) {
+    @objc func textInputbarDidMove(_ note: Notification) {
         
         guard let pipWindow = self.pipWindow else {
             return
@@ -635,8 +635,8 @@ extension MessageViewController {
             let pointSize = MessageTableViewCell.defaultFontSize()
             
             let attributes = [
-                NSFontAttributeName : UIFont.systemFont(ofSize: pointSize),
-                NSParagraphStyleAttributeName : paragraphStyle
+                NSAttributedStringKey.font : UIFont.systemFont(ofSize: pointSize),
+                NSAttributedStringKey.paragraphStyle : paragraphStyle
             ]
             
             var width = tableView.frame.width-kMessageTableViewCellAvatarHeight

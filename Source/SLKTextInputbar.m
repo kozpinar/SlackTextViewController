@@ -304,8 +304,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     CGFloat minimumHeight = self.textView.intrinsicContentSize.height;
     minimumHeight += self.contentInset.top;
     minimumHeight += self.slk_bottomMargin;
-    if (_counterPosition == SLKCounterPositionAlwaysTop || _counterPosition == SLKCounterPositionAlwaysBottom) {
-        minimumHeight += self.textView.intrinsicContentSize.height;
+    if (_counterPosition == SLKCounterPositionAlwaysTop) {
+        minimumHeight += 20;
     }
     return minimumHeight;
 }
@@ -581,9 +581,6 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     {
         counter = [NSString stringWithFormat:@"%ld", (long)(self.maxCharCount - text.length)];
     }
-    if (self.counterStyle == SLKCounterStyleCount) {
-        counter = [NSString stringWithFormat: @"%ld", (long) (text.length)];
-    }
     
     self.charCountLabel.text = counter;
     self.charCountLabel.textColor = [self limitExceeded] ? self.charCountLabelWarningColor : self.charCountLabelNormalColor;
@@ -602,7 +599,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     }
     
     // Updates the char counter label
-    if (self.maxCharCount > 0) {
+    if (self.minCharCount + self.maxCharCount > 0) {
         [self slk_updateCounter];
     }
     
@@ -634,8 +631,8 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 
 - (void)slk_didChangeTextViewContentSize:(NSNotification *)notification
 {
-    if (self.maxCharCount > 0) {
-        BOOL shouldHide = (self.textView.numberOfLines == 1) || self.editing;
+    if (self.minCharCount + self.maxCharCount > 0) {
+        BOOL shouldHide = (self.textView.text.length == 0) || self.editing;
         self.charCountLabel.hidden = shouldHide;
     }
 }
