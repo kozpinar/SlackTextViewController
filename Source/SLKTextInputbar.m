@@ -304,7 +304,9 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     CGFloat minimumHeight = self.textView.intrinsicContentSize.height;
     minimumHeight += self.contentInset.top;
     minimumHeight += self.slk_bottomMargin;
-    
+    if (_counterPosition == SLKCounterPositionAlwaysTop || _counterPosition == SLKCounterPositionAlwaysBottom) {
+        minimumHeight += self.textView.intrinsicContentSize.height;
+    }
     return minimumHeight;
 }
 
@@ -337,6 +339,10 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
 - (BOOL)limitExceeded
 {
     NSString *text = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    if (self.minCharCount > 0 && text.length < self.minCharCount) {
+        return YES;
+    }
     
     if (self.maxCharCount > 0 && text.length > self.maxCharCount) {
         return YES;
@@ -507,10 +513,9 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
                               };
     
     // Constraints are different depending of the counter's position type
-    if (counterPosition == SLKCounterPositionBottom) {
+    if (counterPosition == SLKCounterPositionBottom || counterPosition == SLKCounterPositionAlwaysBottom) {
         _charCountLabelVCs = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[charCountLabel]-(bottom)-[rightButton]" options:0 metrics:metrics views:views];
-    }
-    else {
+    } else {
         _charCountLabelVCs = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(top@750)-[charCountLabel]-(>=0)-|" options:0 metrics:metrics views:views];
     }
     
@@ -575,6 +580,9 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     if (self.counterStyle == SLKCounterStyleCountdownReversed)
     {
         counter = [NSString stringWithFormat:@"%ld", (long)(self.maxCharCount - text.length)];
+    }
+    if (self.counterStyle == SLKCounterStyleCount) {
+        counter = [NSString stringWithFormat: @"%ld", (long) (text.length)];
     }
     
     self.charCountLabel.text = counter;

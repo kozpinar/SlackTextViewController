@@ -15,12 +15,15 @@ typedef NS_ENUM(NSUInteger, SLKCounterStyle) {
     SLKCounterStyleNone,
     SLKCounterStyleSplit,
     SLKCounterStyleCountdown,
-    SLKCounterStyleCountdownReversed
+    SLKCounterStyleCountdownReversed,
+    SLKCounterStyleCount
 };
 
 typedef NS_ENUM(NSUInteger, SLKCounterPosition) {
     SLKCounterPositionTop,
-    SLKCounterPositionBottom
+    SLKCounterPositionBottom,
+    SLKCounterPositionAlwaysTop,
+    SLKCounterPositionAlwaysBottom
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -128,8 +131,11 @@ NS_ASSUME_NONNULL_BEGIN
 /** The label used to display the character counts. */
 @property (nonatomic, readonly) UILabel *charCountLabel;
 
-/** The maximum character count allowed. If larger than 0, a character count label will be displayed on top of the right button. Default is 0, which means limitless.*/
+/** The maximum character count allowed. If larger than 0, a character count label will be displayed on top of the right button. Default is 0, which means limitless. */
 @property (nonatomic, readwrite) NSUInteger maxCharCount;
+
+/** The minimum character count allowed. If larger than 0, a character count label will be displayed on top of the right button. Default is 0, which means limitless. Only one of the properties is acceptable when minCharCount & maxCharCount are both set. minCharCount is preferred when minCharCount and maxCharCount both are larger than 0, the logic will work according to minCharCount */
+@property (nonatomic, readwrite) NSUInteger minCharCount;
 
 /** The character counter formatting. Ignored if maxCharCount is 0. Default is None. */
 @property (nonatomic, assign) SLKCounterStyle counterStyle;
